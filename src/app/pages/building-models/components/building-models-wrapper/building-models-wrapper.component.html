@@ -1,0 +1,6 @@
+<app-business-header [(buttons)]="headerButtons" (onBurgerClick)="onBurgerClick($event)">
+</app-business-header>
+<app-building-models-sidebar [blocks]="sidebarBlocks" [isShown]="isSidebarShown"></app-building-models-sidebar>
+<div class="building-models-wrapper" [ngClass]="{'building-models-wrapper_shift': isSidebarShown}">
+    <app-building-models-canvas></app-building-models-canvas>
+</div>

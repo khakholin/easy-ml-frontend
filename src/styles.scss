@@ -1,6 +1,7 @@
 @import './styles/mixins';
 @import './styles/null-style';
 @import './styles/theme';
+@import './styles/constants';
 
 html,
 body {
@@ -10,4 +11,5 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: $defaultBackgroundColor;
 }

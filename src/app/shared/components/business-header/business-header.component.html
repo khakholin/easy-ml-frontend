@@ -1,0 +1,16 @@
+<div class="business-header">
+    <ng-container *ngFor="let item of buttons">
+        <div *ngIf="item !== 'burger'" class="business-header-button">
+            <mat-icon (click)="onActionClick()">{{item}}</mat-icon>
+        </div>
+        <div *ngIf="item === 'burger'" class="business-header-burger" (click)="onBurgerClick()">
+            <span class="business-header-burger__pseudo-line"
+                [ngClass]="{'business-header-burger__pseudo-line_clicked': isButtonClicked}"></span>
+            <span class="business-header-burger__line"
+                [ngClass]="{'business-header-burger__line_clicked': isButtonClicked}"></span>
+        </div>
+    </ng-container>
+    <div class="business-header__title">
+        easy-ml
+    </div>
+</div>

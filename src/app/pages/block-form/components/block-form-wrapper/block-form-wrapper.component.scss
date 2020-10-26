@@ -1,0 +1,34 @@
+@import '../../../../../styles/constants';
+
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.block-form-wrapper {
+    transition: all 0.5s ease;
+    padding-top: $headerHeight;
+    display: flex;
+    justify-content: center;
+}
+
+.block-form {
+    margin: 20px 0;
+    padding: 20px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 0 #d3d9de,
+        0 0 0 1px #e7e8ec;
+
+    &__title {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    &-field {
+        margin-top: 20px;
+    }
+}

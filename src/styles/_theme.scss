@@ -1,20 +1,20 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
-$easy-ml-pink: (50 : #f7e9f6,
-    100 : #ecc8e8,
-    200 : #e0a3d9,
-    300 : #d37ec9,
-    400 : #c963be,
-    500 : #c047b2,
-    600 : #ba40ab,
-    700 : #b237a2,
-    800 : #aa2f99,
-    900 : #9c208a,
-    A100 : #ffd7f9,
-    A200 : #ffa4f0,
-    A400 : #ff71e8,
-    A700 : #ff58e4,
+$easy-ml-primary: (50 : #e9f7f5,
+    100 : #c8ece9,
+    200 : #a3e0db,
+    300 : #7ed3c0,
+    400 : #63c9b8,
+    500 : #47c0ac,
+    600 : #40bab0,
+    700 : #37b2a2,
+    800 : #2faa96,
+    900 : #209c92,
+    A100 : #d7fffc,
+    A200 : #a4fff3,
+    A400 : #71ffec,
+    A700 : #58ffe3,
     contrast: (50 : #000000,
         100 : #000000,
         200 : #000000,
@@ -61,7 +61,7 @@ $easy-ml-blue: (50 : #e8e7f1,
         A700 : #ffffff,
     ));
 
-$my-app-primary: mat-palette($easy-ml-pink);
+$my-app-primary: mat-palette($easy-ml-primary);
 $my-app-accent: mat-palette($easy-ml-blue);
 $my-app-warn: mat-palette($mat-deep-orange);
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);

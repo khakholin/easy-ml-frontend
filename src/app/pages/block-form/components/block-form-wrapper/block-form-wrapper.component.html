@@ -1,0 +1,10 @@
+<app-business-header [buttons]="headerButtons" (onActionClick)="onActionClick($event)"></app-business-header>
+<div class="block-form-wrapper">
+    <div class="block-form">
+        <div class="block-form__title">Настройка блока</div>
+        <mat-form-field class="block-form-field">
+            <mat-label>Тип блока</mat-label>
+            <input matInput type="text" [(ngModel)]="blockType">
+        </mat-form-field>
+    </div>
+</div>

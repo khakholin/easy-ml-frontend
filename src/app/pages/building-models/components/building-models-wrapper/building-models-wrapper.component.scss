@@ -1,0 +1,17 @@
+@import '../../../../../styles/constants';
+
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.building-models-wrapper {
+    transition: all 0.5s ease;
+    padding-top: $headerHeight;
+    height: 2000px;
+    display: flex;
+
+    &_shift {
+        margin-left: $sidebarWidth;
+    }
+}

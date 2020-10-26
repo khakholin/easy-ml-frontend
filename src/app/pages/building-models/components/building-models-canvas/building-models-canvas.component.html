@@ -1,0 +1,12 @@
+<div cdkDropList #blockList="cdkDropList" [cdkDropListData]="blocks" [cdkDropListConnectedTo]="[treeList]"
+    class="example-list" (cdkDropListDropped)="drop($event, 'blocks')">
+    <div class="example-box" *ngFor="let item of blocks" cdkDrag>{{item}}</div>
+</div>
+<div cdkDropList #treeList="cdkDropList" [cdkDropListData]="tree" class="example-list"
+    (cdkDropListDropped)="drop($event,'tree')">
+    <div class="example-row" *ngFor="let subTree of tree">
+        <div class="example-box" *ngFor="let item of subTree" cdkDrag>
+            {{item}}
+        </div>
+    </div>
+</div>
