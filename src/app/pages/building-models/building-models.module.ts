@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DragScrollModule } from 'ngx-drag-scroll';
-import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 import { MaterialModule } from 'src/app/material.module';
 import { BuildingModelsServiceModule } from './building-models-service.module';
@@ -24,7 +23,6 @@ import { BuildingModelsCanvasComponent } from './components/building-models-canv
         DragScrollModule,
         FormsModule,
         MaterialModule,
-        NgxGraphModule,
         ReactiveFormsModule,
         RouterModule,
         SharedModule,

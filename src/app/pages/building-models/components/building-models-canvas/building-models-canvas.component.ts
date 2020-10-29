@@ -1,6 +1,5 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem } from '@angular/cdk/drag-drop';
-import { PanningAxis } from '@swimlane/ngx-graph';
 
 @Component({
     selector: 'app-building-models-canvas',
@@ -10,7 +9,6 @@ import { PanningAxis } from '@swimlane/ngx-graph';
 export class BuildingModelsCanvasComponent {
     @ViewChild('line') line: ElementRef<HTMLInputElement>;
     // @Input() blocks;
-    panningAxis = PanningAxis;
     connectedBlocks = { firstBlock: {} as any, secondBlock: {} as any };
     linesArray = [];
     blocks = [
