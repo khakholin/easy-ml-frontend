@@ -19,6 +19,10 @@ const routes: Routes = [
         component: BlockFormWrapperComponent,
       },
       {
+        path: 'block-form/:id',
+        component: BlockFormWrapperComponent,
+      },
+      {
         path: '**',
         redirectTo: 'building-models',
         pathMatch: 'full',

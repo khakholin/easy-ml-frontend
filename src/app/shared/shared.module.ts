@@ -5,11 +5,13 @@ import { RouterModule } from '@angular/router';
 
 import { BusinessHeaderComponent } from './components/business-header/business-header.component';
 import { MaterialModule } from '../material.module';
+import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
 
 
 @NgModule({
     declarations: [
         BusinessHeaderComponent,
+        ConfirmationModalComponent,
     ],
     imports: [
         CommonModule,
@@ -19,6 +21,7 @@ import { MaterialModule } from '../material.module';
     ],
     exports: [
         BusinessHeaderComponent,
+        ConfirmationModalComponent,
     ],
     providers: [
     ]

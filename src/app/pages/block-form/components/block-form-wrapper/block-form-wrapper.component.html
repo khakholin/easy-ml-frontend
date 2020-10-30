@@ -2,9 +2,48 @@
 <div class="block-form-wrapper">
     <div class="block-form">
         <div class="block-form__title">Настройка блока</div>
-        <mat-form-field class="block-form-field">
-            <mat-label>Тип блока</mat-label>
-            <input matInput type="text" [(ngModel)]="blockType">
-        </mat-form-field>
+        <ng-container *ngIf="block; else loader">
+            <mat-form-field class="block-form-field">
+                <mat-label>Тип блока</mat-label>
+                <input matInput type="text" [(ngModel)]="block.blockType">
+            </mat-form-field>
+            <div class="block-form-properties">
+                <div class="block-form-properties-header">
+                    <div class="block-form__sub-title">Свойства</div>
+                    <div class="block-form-properties__secondary-text" (click)="onPropertyAddClick()">+
+                        добавить
+                        свойство
+                    </div>
+                </div>
+                <div class="block-form-properties-content">
+                    <div class="block-form-properties-item" *ngFor="let property; index as index; of block?.properties">
+                        <mat-form-field class="block-form-properties-item__field">
+                            <mat-label>Name</mat-label>
+                            <input matInput type="text" [(ngModel)]="property.name">
+                        </mat-form-field>
+                        <mat-form-field class="block-form-properties-item__field">
+                            <mat-label>Alias</mat-label>
+                            <input matInput type="text" [(ngModel)]="property.alias">
+                        </mat-form-field>
+                        <mat-form-field class="block-form-properties-item__field">
+                            <mat-label>Default</mat-label>
+                            <input matInput type="number" [(ngModel)]="property.default">
+                        </mat-form-field>
+                        <div class="block-form-properties__secondary-text" (click)="onPropertyDeleteClick(index)">
+                            удалить свойство</div>
+                    </div>
+                </div>
+                <div class="block-form__empty" *ngIf="!block.properties.length">У данного блока нет свойств...</div>
+            </div>
+            <div class="block-form-buttons">
+                <button mat-stroked-button color="accent" (click)="onDelete()">Удалить блок</button>
+                <button mat-stroked-button color="primary" (click)="onSave()"
+                    [disabled]="block.blockType ? false : true">Сохранить</button>
+            </div>
+        </ng-container>
+
+        <ng-template #loader>
+            <mat-progress-bar class="block-form-loader" mode="indeterminate"></mat-progress-bar>
+        </ng-template>
     </div>
 </div>

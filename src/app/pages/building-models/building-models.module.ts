@@ -8,13 +8,11 @@ import { MaterialModule } from 'src/app/material.module';
 import { BuildingModelsServiceModule } from './building-models-service.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BuildingModelsWrapperComponent } from './components/building-models-wrapper/building-models-wrapper.component';
-import { BuildingModelsSidebarComponent } from './components/building-models-sidebar/building-models-sidebar.component';
-import { BuildingModelsCanvasComponent } from './components/building-models-canvas/building-models-canvas.component';
+import { BlockInformationComponent } from './modals/block-information/block-information.component';
 
 @NgModule({
     declarations: [
-        BuildingModelsCanvasComponent,
-        BuildingModelsSidebarComponent,
+        BlockInformationComponent,
         BuildingModelsWrapperComponent,
     ],
     imports: [
@@ -28,6 +26,6 @@ import { BuildingModelsCanvasComponent } from './components/building-models-canv
         SharedModule,
     ],
     entryComponents: [
-    ]
+    ],
 })
 export class BuildingModelsModule { }

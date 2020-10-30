@@ -15,9 +15,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "outputPath": "dist/easy-ml-frontend",
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            },
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -33,7 +36,7 @@
             ],
             "scripts": [
               "./node_modules/leader-line/leader-line.min.js"
-            ],
+            ]
           },
           "configurations": {
             "production": {
@@ -67,9 +70,12 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "easy-ml-frontend:build"
+            "browserTarget": "easy-ml-frontend:build",
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            }
           },
           "configurations": {
             "production": {

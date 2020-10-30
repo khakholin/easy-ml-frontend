@@ -1,0 +1,7 @@
+<mat-icon class="confirmation-modal__close" (click)="onClose()">clear</mat-icon>
+<div class="confirmation-modal__title">{{data?.title}}</div>
+<div class="confirmation-modal__body" [innerHTML]="data?.body"></div>
+<div class="confirmation-modal-actions">
+    <button mat-flat-button color="primary" [mat-dialog-close]="false">Нет</button>
+    <button mat-flat-button color="accent" [mat-dialog-close]="true">Да</button>
+</div>

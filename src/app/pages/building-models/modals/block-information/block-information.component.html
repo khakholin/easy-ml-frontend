@@ -1,0 +1,42 @@
+<div class="block-information">
+    <mat-icon class="block-information__close" (click)="onClose()">clear</mat-icon>
+    <div class="block-information__title">{{data?.title}}</div>
+    <div class="block-information-content">
+        <div class="block-information__sub-title">Тип блока: <strong>{{currentData?.blockType}}</strong></div>
+        <div class="block-information-properties">
+            <div class="block-information-properties-header">
+                <div class="block-information__sub-title">Свойства</div>
+                <div class="block-information-properties__secondary-text" (click)="onPropertyAddClick()">+
+                    добавить
+                    свойство
+                </div>
+            </div>
+            <div class="block-information-properties-content">
+                <div class="block-information-properties-item"
+                    *ngFor="let property; index as index; of currentData?.properties">
+                    <mat-form-field class="block-information-properties-item__field">
+                        <mat-label>Name</mat-label>
+                        <input matInput type="text" [(ngModel)]="property.name">
+                    </mat-form-field>
+                    <mat-form-field class="block-information-properties-item__field">
+                        <mat-label>Alias</mat-label>
+                        <input matInput type="text" [(ngModel)]="property.alias">
+                    </mat-form-field>
+                    <mat-form-field class="block-information-properties-item__field">
+                        <mat-label>Default</mat-label>
+                        <input matInput type="number" [(ngModel)]="property.default">
+                    </mat-form-field>
+                    <div class="block-information-properties__secondary-text" (click)="onPropertyDeleteClick(index)">
+                        удалить свойство</div>
+                </div>
+            </div>
+            <div class="block-information__empty" *ngIf="!currentData?.properties?.length">У данного блока нет
+                свойств...</div>
+        </div>
+        <div class="block-information-buttons">
+            <button mat-stroked-button color="accent" (click)="onClose()">Отменить изменение</button>
+            <button mat-stroked-button color="primary" [disabled]="currentData?.blockType ? false : true"
+                [mat-dialog-close]="currentData">Сохранить</button>
+        </div>
+    </div>
+</div>

@@ -5,8 +5,11 @@
     <div class="building-models-sidebar" [ngClass]="{'building-models-sidebar_hide': !isSidebarShown}">
         <div class="building-models-sidebar-content" cdkDropList [cdkDropListData]="sidebarBlocks"
             cdkDropListSortingDisabled>
-            <div class="building-models-sidebar-block" cdkDrag *ngFor="let item of sidebarBlocks">
+            <div class="building-models-sidebar-block" cdkDrag *ngFor="let item of sidebarBlocks"
+                [routerLink]="['/block-form', item._id]">
                 {{item.blockType}}
+                <mat-icon class="building-models-sidebar__delete" (click)="onBlockDelete($event, item._id)">clear
+                </mat-icon>
             </div>
         </div>
         <div class="building-models-sidebar-add">
@@ -14,37 +17,36 @@
         </div>
     </div>
 
-    <!-- <div cdkDropList [cdkDropListData]="sidebarBlocks" cdkDropListSortingDisabled class="example-list" >
-        <div class="example-box" *ngFor="let item of sidebarBlocks" cdkDrag>{{item.blockType}}</div>
-    </div> -->
-
     <drag-scroll #drg class="building-models-wrapper" [ngClass]="{'building-models-wrapper_shift': isSidebarShown}"
         style="width: '100%';">
-        <div class="example-list">
-            <div *ngFor="let subTree of canvasBlocks" cdkDropList cdkDropListOrientation="horizontal"
-                [cdkDropListData]="subTree" (cdkDropListDropped)="drop($event)">
-                <div class="example-row">
-                    <div class="example-box" [id]="'box' + item.id" *ngFor="let item of subTree; index as index" cdkDrag
-                        (click)="onBlockClick('box' + item.id)" (mouseover)="onBlockHover('box' + item.id)"
-                        (mouseout)="onMouseOut('box' + item.id)">
-                        {{item.blockType}}
+        <div class="building-models-actions" *ngIf="linesArray.length">
+            <button mat-stroked-button color="accent" (click)="removeLastLine()">Отменить последнее соединение</button>
+        </div>
+        <div class="building-models-list">
+            <div *ngFor="let subTree; index as subArrIndex;  of canvasBlocks" cdkDropList
+                cdkDropListOrientation="horizontal" [cdkDropListData]="subTree" (cdkDropListDropped)="drop($event)">
+                <div class="building-models-row">
+                    <div class="building-models-box" [id]="'box' + item.id"
+                        *ngFor="let item of subTree; index as itemIndex" cdkDrag (click)="onBlockClick('box' + item.id)"
+                        (mouseover)="onBlockHover('box' + item.id)" (mouseout)="onMouseOut('box' + item.id)">
+                        <div class="building-models-properties" *ngIf="item.properties.length; else emptyMessage">
+                            <div class="building-models-properties__item" *ngFor="let property of item?.properties">
+                                {{property?.alias}}:{{property?.default}}
+                            </div>
+                        </div>
+                        <ng-template #emptyMessage>
+                            <div class="building-models__secondary-text">У данного блока нет свойств...</div>
+                        </ng-template>
+                        <mat-icon class="building-models-box__delete"
+                            (click)="onBlockDeleteFromModel(subArrIndex, itemIndex, 'box' + item.id)">clear
+                        </mat-icon>
+                        <mat-icon class="building-models-box__settings"
+                            (click)="onBlockModelEdit(subArrIndex, itemIndex)">settings
+                        </mat-icon>
+                        <div class="building-models-box__number">{{getBlockIndex(subArrIndex, itemIndex)}}</div>
                     </div>
                 </div>
             </div>
-            <!-- <svg *ngIf="linesArrayStatus" class="svg">
-                <defs>
-                    <marker id="triangle" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="strokeWidth"
-                        markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
-                    </marker>
-                </defs>
-                <line *ngFor="let item of linesArray" class="line" [attr.x1]="item.x1" [attr.y1]="item.y1"
-                    [attr.x2]="item.x2" [attr.y2]="item.y2" #line class="line original" marker-end="url(#triangle)" />
-            </svg> -->
         </div>
     </drag-scroll>
-    <!-- <app-building-models-sidebar [blocks]="sidebarBlocks" [isShown]="isSidebarShown"></app-building-models-sidebar> -->
-    <!-- <drag-scroll class="building-models-wrapper" [ngClass]="{'building-models-wrapper_shift': isSidebarShown}">
-        <app-building-models-canvas></app-building-models-canvas>
-    </drag-scroll> -->
 </div>

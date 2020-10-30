@@ -1,7 +1,13 @@
 import { Component, HostListener, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem } from '@angular/cdk/drag-drop';
 import 'leader-line';
-import { DragScrollComponent } from 'ngx-drag-scroll';
+import { BuildingModelsHttpService } from '../../services/building-models-http.service';
+import { IBlock } from 'src/app/shared/models/blocks.interfaces';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { ConfirmationModalComponent } from 'src/app/shared/components/confirmation-modal/confirmation-modal.component';
+import { BlockInformationComponent } from '../../modals/block-information/block-information.component';
+
 declare let LeaderLine: any;
 
 @Component({
@@ -15,32 +21,30 @@ export class BuildingModelsWrapperComponent implements OnInit {
         this.linesRewrite();
     }
 
-
-    @ViewChild('drg', { read: DragScrollComponent }) ds: DragScrollComponent;
-
-    isSidebarShown: boolean;
-    headerButtons = ['burger'];
-    connectedBlocks = { firstBlock: {} as any, secondBlock: {} as any };
-
-    linesArrayStatus = true;
-    linesArray = [];
-    idIterator = this.IdGenerator();
-
-    sidebarBlocks = [
-        {
-            blockType: 'CNN',
-        },
-        {
-            blockType: 'RNN',
-        },
-    ];
-
+    private _sub: Subscription = new Subscription;
     canvasBlocks = [[]];
+    connectedBlocks = { firstBlock: {} as any, secondBlock: {} as any };
+    headerButtons = ['burger'];
+    idIterator = this.IdGenerator();
+    isSidebarShown: boolean;
+    linesArray = [];
+    linesArrayStatus = true;
+    sidebarBlocks: IBlock[];
 
-    constructor() { }
+    constructor(
+        private _buildingModelsHttp: BuildingModelsHttpService,
+        public dialog: MatDialog,
+    ) { }
 
     ngOnInit(): void {
         this.idIterator = this.IdGenerator();
+        this._buildingModelsHttp.getAllBlocks()
+            .subscribe(
+                (res: IBlock[]) => {
+                    this.sidebarBlocks = res;
+                },
+                (err) => console.warn(err)
+            )
     }
 
     onBurgerClick(event: boolean): void {
@@ -107,6 +111,71 @@ export class BuildingModelsWrapperComponent implements OnInit {
         return color;
     }
 
+    onBlockModelEdit(subArrIndex: number, itemIndex: number) {
+        event.stopPropagation();
+
+        const dialogRef = this.dialog.open(BlockInformationComponent, {
+            data: {
+                title: 'Изменение параметров блока',
+                block: this.canvasBlocks[subArrIndex][itemIndex],
+            }
+        });
+
+        this._sub.add(
+            dialogRef.afterClosed()
+                .subscribe(
+                    editedBlock => {
+                        if (editedBlock) {
+                            this.canvasBlocks[subArrIndex][itemIndex] = {
+                                ...this.canvasBlocks[subArrIndex][itemIndex],
+                                properties: editedBlock.properties.filter(property => property.name.length && property.alias.length && property.default.toString().length),
+                            }
+                        }
+                    }
+                )
+        );
+    }
+
+    onBlockDeleteFromModel(subArrIndex: number, itemIndex: number, blockId: string) {
+        event.stopPropagation();
+
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+            data: {
+                title: 'Удаление блока из модели',
+                body: `Вы действительно хотите удалить из модели блок${this.canvasBlocks[subArrIndex][itemIndex]?.blockType ? ' "' + this.canvasBlocks[subArrIndex][itemIndex]?.blockType + '"' : ''}?`,
+            }
+        });
+
+        this._sub.add(
+            dialogRef.afterClosed()
+                .subscribe(
+                    (action: boolean) => {
+                        if (action) {
+                            this.linesArray.map(line => {
+                                if (line.firstBlockId === blockId || line.secondBlockId === blockId) {
+                                    line.line.remove();
+                                }
+                            });
+                            this.linesArray = this.linesArray.filter(line => line.firstBlockId !== blockId && line.secondBlockId === blockId);
+                            this.canvasBlocks[subArrIndex].splice(itemIndex, 1);
+                            if (!this.canvasBlocks[subArrIndex].length && subArrIndex !== this.canvasBlocks.length - 1) {
+                                this.canvasBlocks.splice(subArrIndex, 1);
+                            }
+                        }
+                    }
+                )
+        );
+    }
+
+    getBlockIndex(subArrIndex: number, itemIndex: number) {
+        let totalLength = 0;
+        for (let i = 0; i < subArrIndex; i++) {
+            totalLength += this.canvasBlocks[i].length;
+        }
+
+        return totalLength + itemIndex;
+    }
+
     hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -117,26 +186,25 @@ export class BuildingModelsWrapperComponent implements OnInit {
     }
 
     linesRewrite() {
+        console.log(this.linesArray);
+
         this.linesArray = this.linesArray?.map((line) => {
             line.line.remove();
-            const newLine = new LeaderLine(
-                document.getElementById(line.firstBlockId),
-                document.getElementById(line.secondBlockId)
-            );
-            newLine.color = this.getRandomColor();
-            newLine.size = 2;
-            newLine.path = 'arc'
-            newLine.setOptions({ startSocket: 'bottom', endSocket: 'top' });
+            if (document.getElementById(line.firstBlockId).getBoundingClientRect().top < document.getElementById(line.secondBlockId).getBoundingClientRect().top) {
+                const newLine = new LeaderLine(
+                    document.getElementById(line.firstBlockId),
+                    document.getElementById(line.secondBlockId)
+                );
+                newLine.color = this.getRandomColor();
+                newLine.size = 2;
+                newLine.path = 'arc'
+                newLine.setOptions({ startSocket: 'bottom', endSocket: 'top' });
+                return { ...line, line: newLine, lineColor: newLine.color };
+            } else {
+                return null
+            }
+        }).filter(line => line);
 
-            // const rectFirstBlock = document.getElementById(line.firstBlockId).getBoundingClientRect();
-            // const rectSecondBlock = document.getElementById(line.secondBlockId).getBoundingClientRect();
-
-            // const x1 = rectFirstBlock.left + rectFirstBlock.width / 2;
-            // const y1 = rectFirstBlock.top + rectFirstBlock.height;
-            // const x2 = rectSecondBlock.left + rectSecondBlock.width / 2;
-            // const y2 = rectSecondBlock.top;
-            return { ...line, line: newLine, lineColor: newLine.color };
-        });
     }
 
     onBlockHover(blockId) {
@@ -181,10 +249,11 @@ export class BuildingModelsWrapperComponent implements OnInit {
                 width: rect.width,
                 height: rect.height,
             };
-            if (this.connectedBlocks.firstBlock.top >= this.connectedBlocks.secondBlock.top) {
-                this.connectedBlocks.firstBlock = this.connectedBlocks.secondBlock;
-                this.connectedBlocks.secondBlock = {};
-            }
+        }
+
+        if (this.connectedBlocks.firstBlock.top >= this.connectedBlocks.secondBlock.top) {
+            this.connectedBlocks.firstBlock = {};
+            this.connectedBlocks.secondBlock = {};
         }
 
         if (Object.keys(this.connectedBlocks.firstBlock).length && Object.keys(this.connectedBlocks.secondBlock).length) {
@@ -198,14 +267,50 @@ export class BuildingModelsWrapperComponent implements OnInit {
             line.path = 'arc'
             line.setOptions({ startSocket: 'bottom', endSocket: 'top' });
 
-            // const x1 = this.connectedBlocks.firstBlock.left + this.connectedBlocks.firstBlock.width / 2;
-            // const y1 = this.connectedBlocks.firstBlock.top + this.connectedBlocks.firstBlock.height;
-            // const x2 = this.connectedBlocks.secondBlock.left + this.connectedBlocks.secondBlock.width / 2;
-            // const y2 = this.connectedBlocks.secondBlock.top - 2;
-
             this.linesArray.push({ firstBlockId: this.connectedBlocks.firstBlock.blockId, secondBlockId: this.connectedBlocks.secondBlock.blockId, line, lineColor: line.color });
             this.connectedBlocks.firstBlock = {};
             this.connectedBlocks.secondBlock = {};
         }
+    }
+
+    removeLastLine() {
+        this.linesArray[this.linesArray.length - 1].line.remove();
+        this.linesArray.pop();
+    }
+
+    onBlockDelete(event, id: string): void {
+        event.stopPropagation();
+
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+            data: {
+                title: 'Удаление блока',
+                body: `Вы действительно хотите удалить блок${this.sidebarBlocks[id]?.blockType ? ' "' + this.sidebarBlocks[id]?.blockType + '"' : ''}?`,
+            }
+        });
+
+        this._sub.add(
+            dialogRef.afterClosed()
+                .subscribe(
+                    (action: boolean) => {
+                        if (action) {
+                            this._buildingModelsHttp.deleteBlockById(id)
+                                .subscribe(
+                                    req => {
+                                        this._buildingModelsHttp.getAllBlocks()
+                                            .subscribe(
+                                                (res: IBlock[]) => {
+                                                    this.sidebarBlocks = res;
+                                                },
+                                                (err) => console.warn(err)
+                                            )
+                                    },
+                                    err => {
+                                        console.warn(err)
+                                    }
+                                )
+                        }
+                    }
+                )
+        );
     }
 }
